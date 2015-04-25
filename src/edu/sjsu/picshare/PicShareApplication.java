@@ -1,5 +1,8 @@
 package edu.sjsu.picshare;
 
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseCrashReporting;
@@ -23,10 +26,21 @@ public class PicShareApplication extends Application {
     Parse.initialize(this, "kw2g2J8LW9Le0Ot9BF7zmVW2rG7Pc8o5XF1F7Q58", 
     		"9mqh78i9aIFHVvoqapnW6LdT8LG8V7Nif4JO0dZc");
 
-    ParseUser.enableAutomaticUser();
-    ParseACL defaultACL = new ParseACL();
+    //ParseUser.enableAutomaticUser();
+    //ParseACL defaultACL = new ParseACL();
     // Optionally enable public read access.
     // defaultACL.setPublicReadAccess(true);
-    ParseACL.setDefaultACL(defaultACL, true);
+    //ParseACL.setDefaultACL(defaultACL, true);
+    
+    ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+	    .threadPoolSize(3)
+	    .threadPriority(Thread.NORM_PRIORITY - 2)
+	    .memoryCacheSize(1500000) // 1.5 Mb
+	    .denyCacheImageMultipleSizesInMemory()
+	    .discCacheFileNameGenerator(new Md5FileNameGenerator())
+	    .enableLogging() // Not necessary in common
+	    .build();
+// Initialize ImageLoader with configuration.
+    ImageLoader.getInstance().init(config);
   }
 }

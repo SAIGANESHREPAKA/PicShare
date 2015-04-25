@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
 
     <application
         android:name=".PicShareApplication"
@@ -38,7 +39,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreateTodoActivity" />
-
+		<activity android:name=".UploadPhoto"></activity>	
+		<activity android:name=".CustomGallery"></activity>
+		<activity android:name=".CreateAlbum"></activity>
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id" />

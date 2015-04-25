@@ -1,16 +1,23 @@
 package edu.sjsu.picshare;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -103,6 +110,22 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "edu.sjsu.picshare", 
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+                }
+        } catch (NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+        
         FacebookSdk.sdkInitialize(this.getApplicationContext());
 
         callbackManager = CallbackManager.Factory.create();
@@ -141,6 +164,7 @@ public class MainActivity extends FragmentActivity {
                                 .setPositiveButton(R.string.ok, null)
                                 .show();
                     }
+                    
                 });
 
         shareDialog = new ShareDialog(this);
@@ -196,6 +220,7 @@ public class MainActivity extends FragmentActivity {
         // Can we present the share dialog for photos?
         canPresentShareDialogWithPhotos = ShareDialog.canShow(
                 SharePhotoContent.class);
+        
     }
 
     @Override
@@ -295,7 +320,7 @@ public class MainActivity extends FragmentActivity {
     }
     
     private void onClickUploadPhoto() {
-    	Intent intent = new Intent(this, ToDoListActivity.class);        
+    	Intent intent = new Intent(this, UploadPhoto.class);        
         startActivity(intent);
     }
 
@@ -306,7 +331,7 @@ public class MainActivity extends FragmentActivity {
     private void postPhoto() {
         Bitmap image = BitmapFactory.decodeResource(this.getResources(), R.drawable.icon);
         SharePhoto sharePhoto = new SharePhoto.Builder().setBitmap(image).build();
-        ArrayList<SharePhoto> photos = new ArrayList<>();
+        ArrayList<SharePhoto> photos = new ArrayList<SharePhoto>();
         photos.add(sharePhoto);
 
         SharePhotoContent sharePhotoContent =
